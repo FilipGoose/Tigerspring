@@ -1,0 +1,487 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Tigerspring">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>Tigerspring</title>
+<meta name="theme-color" content="#faf7f2">
+<style>
+:root{
+  --bg:#faf7f2; --surface:#ffffff; --surface-2:#f3eee6; --text:#2b2622; --muted:#7a7068;
+  --line:#e6dfd4; --accent:#e07a2f; --accent-soft:#fbe7d6; --storm:#d9534f; --storm-soft:#f8dedd;
+  --sun:#e9b949; --sun-soft:#fbf0d2; --ok:#3c9d6b; --ok-soft:#dcf1e5; --blue:#4a7fc1; --blue-soft:#e1ebf7;
+  --shadow:0 1px 2px rgba(0,0,0,.04),0 4px 16px rgba(0,0,0,.05); --r:14px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#1b1917; --surface:#24211e; --surface-2:#2d2925; --text:#efe9e2; --muted:#a89d92;
+    --line:#3a352f; --accent:#f0924b; --accent-soft:#3d2b1d; --storm:#e57373; --storm-soft:#3d2424;
+    --sun:#e9c46a; --sun-soft:#3a321c; --ok:#5cc08b; --ok-soft:#1f3529; --blue:#7ea8dc; --blue-soft:#1f2b3a;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 4px 16px rgba(0,0,0,.25); color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#1b1917; --surface:#24211e; --surface-2:#2d2925; --text:#efe9e2; --muted:#a89d92;
+  --line:#3a352f; --accent:#f0924b; --accent-soft:#3d2b1d; --storm:#e57373; --storm-soft:#3d2424;
+  --sun:#e9c46a; --sun-soft:#3a321c; --ok:#5cc08b; --ok-soft:#1f3529; --blue:#7ea8dc; --blue-soft:#1f2b3a;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 4px 16px rgba(0,0,0,.25); color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{margin:0;padding-top:env(safe-area-inset-top,0px);background:var(--bg);color:var(--text);font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.wrap{max-width:980px;margin:0 auto;padding-block:20px 60px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.notice{background:var(--sun-soft);border-radius:12px;padding:10px 14px;font-size:.875rem;margin-bottom:14px}
+.saved{font-size:.75rem;color:var(--muted)}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+h1{font-size:1.6rem;margin:0;letter-spacing:-.01em}
+h1 span{color:var(--accent)}
+h2{font-size:1.25rem;margin:0 0 12px}
+h3{font-size:1.05rem;margin:0 0 6px}
+.muted{color:var(--muted)}
+.small{font-size:.875rem}
+select,input,button{font:inherit;color:inherit}
+select,input[type=text],input[type=date]{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:9px 11px;width:100%}
+button{cursor:pointer;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:9px 14px}
+button.primary{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
+button.ghost{background:transparent}
+button.danger{color:var(--storm)}
+nav.tabs{display:flex;gap:6px;overflow-x:auto;padding:4px;background:var(--surface-2);border-radius:12px;margin-bottom:18px}
+nav.tabs button{border:0;background:transparent;white-space:nowrap;flex:1;font-weight:500;color:var(--muted)}
+nav.tabs button.active{background:var(--surface);color:var(--text);box-shadow:var(--shadow)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px;box-shadow:var(--shadow);margin-bottom:14px}
+.grid{display:grid;gap:14px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.stat .big{font-size:1.5rem;font-weight:700;line-height:1.2}
+.pill{display:inline-block;padding:2px 10px;border-radius:999px;font-size:.8rem;font-weight:600}
+.p-storm{background:var(--storm-soft);color:var(--storm)}
+.p-sun{background:var(--sun-soft);color:#a27a10}
+:root[data-theme="dark"] .p-sun{color:var(--sun)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .p-sun{color:var(--sun)}}
+.p-ok{background:var(--ok-soft);color:var(--ok)}
+.p-blue{background:var(--blue-soft);color:var(--blue)}
+.p-accent{background:var(--accent-soft);color:var(--accent)}
+.p-muted{background:var(--surface-2);color:var(--muted)}
+.hero{border-left:5px solid var(--accent)}
+.hero.storm{border-left-color:var(--storm)}
+.hero.sun{border-left-color:var(--sun)}
+.timeline{position:relative;height:76px;margin:8px 0 10px}
+.tl-track{position:absolute;left:0;right:0;top:20px;height:16px;background:var(--sun-soft);border-radius:8px}
+.tl-seg{position:absolute;top:20px;height:16px;background:var(--storm);border-radius:4px;opacity:.85}
+.tl-seg span{position:absolute;top:-19px;left:50%;transform:translateX(-50%);font-size:.72rem;font-weight:700;color:var(--muted)}
+.tl-today{position:absolute;top:10px;width:2px;height:36px;background:var(--text)}
+.tl-today::after{content:"I dag";position:absolute;top:48px;left:50%;transform:translateX(-50%);font-size:.72rem;font-weight:700;white-space:nowrap}
+.tl-axis{position:absolute;top:40px;font-size:.7rem;color:var(--muted);transform:translateX(-50%)}
+.leap{padding:0;overflow:hidden}
+.leap summary{list-style:none;cursor:pointer;padding:16px 18px;display:flex;gap:14px;align-items:center}
+.leap summary::-webkit-details-marker{display:none}
+.leap .num{flex:0 0 44px;height:44px;border-radius:12px;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;font-weight:800;font-size:1.1rem}
+.leap.past .num{background:var(--ok-soft);color:var(--ok)}
+.leap.now .num{background:var(--storm);color:#fff}
+.leap .head{flex:1;min-width:0}
+.leap .chev{color:var(--muted);transition:transform .2s}
+.leap[open] .chev{transform:rotate(90deg)}
+.leap .body{padding:0 18px 18px;border-top:1px solid var(--line)}
+.leap .body .grid{margin-top:14px}
+.box{background:var(--surface-2);border-radius:12px;padding:14px}
+.box h4{margin:0 0 6px;font-size:.92rem}
+.box ul{margin:0;padding-left:18px}
+.box li{margin:3px 0}
+.ms{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:1px solid var(--line)}
+.ms:last-child{border-bottom:0}
+.ms input[type=checkbox]{width:22px;height:22px;margin-top:2px;accent-color:var(--ok);flex:0 0 auto}
+.ms .t{flex:1;min-width:0}
+.ms .meta{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px;align-items:center}
+.ms input[type=date]{width:auto;padding:3px 8px;font-size:.82rem}
+.filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.filters button{padding:5px 12px;font-size:.85rem;border-radius:999px}
+.filters button.active{background:var(--text);color:var(--bg);border-color:var(--text)}
+.form-row{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));margin-bottom:12px}
+label{display:block;font-size:.85rem;font-weight:600;margin-bottom:4px}
+.empty{text-align:center;padding:40px 20px}
+.empty .emoji{font-size:2.6rem}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.bar{height:8px;background:var(--surface-2);border-radius:4px;overflow:hidden;margin-top:6px}
+.bar>div{height:100%;background:var(--ok)}
+footer{margin-top:30px;font-size:.8rem;color:var(--muted)}
+.hidden{display:none!important}
+@media (max-width:600px){
+  h1{font-size:1.3rem}.card{padding:14px}.tl-axis.minor{display:none}
+  .wrap{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
+  nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:20;margin:0;border-radius:0;gap:2px;
+    background:var(--surface);border-top:1px solid var(--line);box-shadow:0 -2px 12px rgba(0,0,0,.06);
+    padding:6px max(8px,env(safe-area-inset-left,0px)) calc(6px + env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-right,0px))}
+  nav.tabs button{padding:8px 4px;font-size:.82rem;display:flex;flex-direction:column;align-items:center;gap:2px}
+  nav.tabs button.active{background:var(--accent-soft);color:var(--accent);box-shadow:none}
+  nav.tabs .ic{font-size:1.15rem;line-height:1}
+  header select{min-width:0!important;max-width:52vw}
+  .leap summary{padding:14px;gap:10px}.leap .num{flex-basis:38px;height:38px}
+  .leap .body{padding:0 14px 14px}
+  .stat .big{font-size:1.3rem}
+  .grid.g3{grid-template-columns:1fr 1fr}.grid.g3>.card:last-child{grid-column:1/-1}
+}
+@media (min-width:601px){nav.tabs .ic{display:none}}
+button,select,input{min-height:40px}
+input[type=checkbox]{min-height:0}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <h1>🐯 <span>Tiger</span>spring</h1>
+    <div class="row" id="childPickerWrap">
+      <select id="childPicker" aria-label="Vælg barn" style="width:auto;min-width:160px"></select>
+      <button class="ghost" id="themeBtn" title="Skift lys/mørk">◐</button>
+    </div>
+  </header>
+
+  <nav class="tabs" id="tabs">
+    <button data-tab="overview" class="active"><span class="ic">🏠</span>Overblik</button>
+    <button data-tab="leaps"><span class="ic">🐯</span>Spring</button>
+    <button data-tab="milestones"><span class="ic">🏆</span>Bedrifter</button>
+    <button data-tab="profile"><span class="ic">👶</span>Barn</button>
+  </nav>
+
+  <div id="storageNote" class="notice" hidden>Denne browser tillader ikke at gemme data (fx privat vindue). Det du registrerer forsvinder, når siden lukkes.</div>
+  <main id="view"></main>
+
+  <footer>
+    Tigerspringene beregnes ud fra <b>terminsdatoen</b> (ikke fødselsdatoen), fordi springene følger hjernens modning fra undfangelsen. Tidspunkterne er vejledende – alle børn er forskellige, og et spring kan komme lidt før eller efter. Teorien bag tigerspring er populær blandt forældre, men er ikke solidt videnskabeligt dokumenteret, så brug den som en hjælp til at forstå perioder med uro – ikke som facit. Er du i tvivl om dit barns trivsel eller udvikling, så tal med sundhedsplejersken eller lægen.<br><br>
+    Alt du registrerer gemmes automatisk på denne enhed og er her næste gang du åbner siden. Hver telefon eller computer har sin egen kopi – brug Sikkerhedskopi under "Barn" for at flytte data til en anden enhed. Data forsvinder, hvis du rydder browserens data.
+  </footer>
+</div>
+
+<script>
+/* ---------- Data ---------- */
+const LEAPS = [
+ {n:1,start:4.5,end:5.5,name:"Sansernes verden",short:"Forandrede sansninger",
+  intro:"Barnets sanser og stofskifte modnes hurtigt. Verden føles pludselig mere intens – lyde, lys og berøring opleves stærkere.",
+  signs:["Græder mere og er svær at trøste","Vil være tæt på dig hele tiden","Vil spise oftere","Sover uroligt"],
+  learns:["Er mere vågen og interesseret i omgivelserne","Kigger længere på ting og ansigter","Reagerer mere på lyde og lugte","De første sociale smil kan dukke op"],
+  baby:["Masser af hud-mod-hud og bæring","Dæmp lys og lyd når barnet er overstimuleret","Tal blødt og nyn – din stemme beroliger","Korte stunder med noget at kigge på (kontrastbilleder, dit ansigt)"],
+  parents:["Skift jer til at tage de urolige timer – også om natten","Sig højt til hinanden: 'det er en fase, ikke noget vi gør forkert'","Tag imod hjælp til mad, vasketøj og indkøb","Hvil når barnet sover, frem for at nå alt det praktiske"]},
+ {n:2,start:7.5,end:9.5,name:"Mønstre",short:"Mønstre",
+  intro:"Barnet begynder at genkende enkle mønstre – i det det ser, hører og mærker i sin egen krop.",
+  signs:["Mere klynk og gråd","Vil ikke ligge alene","Ændret søvn og appetit","Sutter mere på hænder/fingre"],
+  learns:["Opdager sine hænder og fødder","Kan holde hovedet lidt bedre","Laver korte lyde og 'samtaler'","Genkender former, lyde og rutiner"],
+  baby:["Leg med hænderne: lad barnet kigge på og mærke dem","Faste små rutiner ved puslebord og putning","Svar på barnets lyde – tag tur i 'samtalen'","Tummy time i små doser"],
+  parents:["Aftal hvem der 'har vagten' hvornår, så I begge får pauser","Del de små fremskridt med hinanden – det giver energi","Gå en tur sammen med barnevognen; frisk luft hjælper alle","Vær milde over for hinanden når I er trætte"]},
+ {n:3,start:11.5,end:12.5,name:"Glidende overgange",short:"Glidende overgange",
+  intro:"Barnet begynder at forstå bevægelser og forandringer, der flyder over i hinanden – fx en stemme der stiger og falder.",
+  signs:["Klæbende og vil holdes","Ammer/spiser mere – eller mindre","Mere sart over for fremmede","Kortere lure"],
+  learns:["Mere glidende bevægelser med arme og ben","Følger ting der bevæger sig med blikket","Eksperimenterer med stemmen: hvin, gurgle","Griber mere bevidst ud efter ting"],
+  baby:["Lad barnet følge en langsomt bevægende ting med øjnene","Syng sange med op- og nedgang i tonen","Giv legetøj der er nemt at gribe","Lad barnet ligge på et tæppe og sparke frit"],
+  parents:["Sænk ambitionerne for en uge – det er ok","Planlæg et kort åndehul for hver af jer","Fortæl hinanden hvad I har brug for i stedet for at gætte","Husk at spise og drikke ordentligt selv"]},
+ {n:4,start:14.5,end:19.5,name:"Begivenheder",short:"Begivenheder",
+  intro:"Et langt og ofte hårdt spring. Barnet opdager korte forløb – at ting sker i en sammenhæng, fx at en bold triller og stopper.",
+  signs:["Søvnen kan blive markant dårligere ('4-måneders-søvnregression')","Meget klæbende og grådlabil","Distraheret under amning/flaske","Humørsvingninger"],
+  learns:["Ruller måske fra mave til ryg","Griber, ryster og putter ting i munden","Forstår årsag og virkning ('jeg slår – det rasler')","Pludrer med flere forskellige lyde"],
+  baby:["Rangler, bolde og ting der laver lyd når barnet rører dem","Gentag lege – barnet elsker at forudsige hvad der sker","Fodr i rolige omgivelser hvis barnet er let distraheret","Hold fast i putterutinen, også når den føles nytteløs"],
+  parents:["Dette spring er langt – planlæg med det, fx færre aftaler","Skift nætter, så én af jer får en hel nats søvn","Søg råd hos sundhedsplejersken hvis søvnen tærer for hårdt","Lav en lille ting for parforholdet: kaffe sammen, en film på sofaen"]},
+ {n:5,start:22.5,end:26.5,name:"Relationer",short:"Relationer",
+  intro:"Barnet forstår afstand mellem ting og mennesker – også at du kan gå væk. Det er ofte her separationsangst begynder.",
+  signs:["Protesterer når du går ud af rummet","Generthed over for fremmede","Vågner oftere om natten","Kan virke frustreret og utålmodig"],
+  learns:["Forstår at ting kan være inde i, under eller bag noget","Sidder måske med støtte","Rækker armene ud for at blive taget op","Flytter ting fra hånd til hånd"],
+  baby:["Leg borte-tit og gem legetøj under et klæde","Sig altid farvel og kom tilbage – det bygger tillid","Lad barnet udforske kasser, skåle og låg","Fortæl hvad du gør: 'nu henter jeg din flaske'"],
+  parents:["Lad begge forældre putte og trøste, så barnet trygt kan være hos jer begge","Tag ikke barnets 'kun mor/kun far' personligt","Planlæg korte pauser hver for sig","Tal om hvordan I vil håndtere søvn, så I står samlet"]},
+ {n:6,start:33.5,end:37.5,name:"Kategorier",short:"Kategorier",
+  intro:"Barnet begynder at sortere verden i grupper: dyr, mad, mennesker, ting der er bløde eller hårde.",
+  signs:["Klæbende og jaloux","Mere gråd ved adskillelse","Spiser måske mindre","Vil ikke skiftes eller klædes på"],
+  learns:["Undersøger ting grundigt fra alle sider","Genkender dyr, billeder og lyde","Kravler eller bevæger sig rundt","Efterligner ansigtsudtryk og lyde"],
+  baby:["Pegebøger med dyr og ting – sig navnene","Lad barnet røre forskellige materialer","Sortér sammen: klodser i én kasse, bolde i en anden","Sæt ord på følelser: 'du er ked af det'"],
+  parents:["Sikr hjemmet – barnet bevæger sig mere","Del opgaverne med at passe, mens den anden får fri","Ros hinanden for tålmodighed","Husk at det er normalt, at barnet foretrækker én forælder i perioder"]},
+ {n:7,start:41.5,end:46.5,name:"Rækkefølger",short:"Rækkefølger",
+  intro:"Barnet forstår, at ting skal ske i en bestemt rækkefølge for at nå et mål – fx at tage en klods og lægge den i en kasse.",
+  signs:["Kort lunte og frustration","Klæbende, især om aftenen","Svært ved at falde i søvn","Vil gøre det selv – men kan ikke helt"],
+  learns:["Stabler, putter i og tager ud","Peger på ting","Rejser sig op ved møbler","Forstår simple ord og beskeder"],
+  baby:["Ting man kan putte i og tage ud af","Lad barnet 'hjælpe' – fx lægge tøj i vaskemaskinen","Fortæl trin for trin: 'først bad, så pyjamas, så bog'","Giv tid til at prøve selv før du hjælper"],
+  parents:["Aftal fælles linje for grænser","Tag en dyb indånding før I griber ind i frustrationen","Skiftes til at få en tidlig morgen","Fejr de små succeser sammen"]},
+ {n:8,start:50.5,end:54.5,name:"Programmer",short:"Programmer",
+  intro:"Barnet forstår mere fleksible forløb – fx at 'spise' eller 'gå i bad' kan gøres på forskellige måder.",
+  signs:["Raserianfald kan begynde","Vil holdes eller ammes meget","Uro om natten","Mere sart og grådlabil"],
+  learns:["Går måske de første skridt","Hjælper med af- og påklædning","Leger 'som om' – fx giver bamsen mad","Siger måske de første ord"],
+  baby:["Inddrag barnet i hverdagens gøremål","Rollelege: madlavning, telefon, dukker","Giv to valg: 'den røde eller den blå trøje?'","Læs de samme bøger igen og igen"],
+  parents:["Undgå at diskutere opdragelse foran barnet midt i et anfald","Giv hinanden 'pause-signal' når én er ved at miste tålmodigheden","Barnet er ofte omkring 1 år – mange starter i dagpleje/vuggestue nu; tal om hvordan I deler afleveringer","Husk at jeres egen søvn også tæller"]},
+ {n:9,start:59.5,end:64.5,name:"Principper",short:"Principper",
+  intro:"Barnet begynder at tænke over, hvordan det kan nå sine mål – og tester grænser og strategier.",
+  signs:["Trodsigt og 'nej' til alt","Humørsvingninger","Klæbende i nye situationer","Ændret søvn"],
+  learns:["Eksperimenterer med at gøre ting på nye måder","Forstår 'mit' og 'dit'","Efterligner voksne i detaljer","Flere ord og gestus"],
+  baby:["Lad barnet prøve – og fejle – i sikre rammer","Vær tydelig og rolig med de vigtigste grænser","Giv barnet små opgaver det kan lykkes med","Navngiv følelser og vis hvad man kan gøre ved dem"],
+  parents:["Vælg jeres kampe sammen – hvad er vigtigt, hvad kan slippes?","Bak hinanden op, også når I er uenige (tag snakken bagefter)","Planlæg en aften kun for jer to","Del humoren – trodsen er også sjov at grine af bagefter"]},
+ {n:10,start:70.5,end:76.5,name:"Systemer",short:"Systemer",
+  intro:"Det sidste store spring. Barnet begynder at forstå større helheder som 'familie', 'hjem' og egne værdier.",
+  signs:["Stærke følelser og raserianfald","Generthed","Svært ved overgange","Kræver meget opmærksomhed"],
+  learns:["Bevidsthed om sig selv – genkender sig selv i spejlet","Forstår regler og forventninger bedre","Leger mere fantasifuldt","Udtrykker egen vilje tydeligt"],
+  baby:["Faste rutiner giver tryghed i alle de nye indtryk","Inddrag barnet i beslutninger, hvor det giver mening","Rollelege og fantasilege","Forbered barnet på skift: 'om lidt skal vi…'"],
+  parents:["Sæt ord på de værdier I gerne vil give videre","Ros hinanden for det I gør godt som forældre","Søg støtte hvis I føler jer kørt ned – det er et tegn på styrke","I har klaret 10 spring – fejr det!"]}
+];
+
+const MILESTONES = [
+ // [id, tekst, kategori, min mdr, max mdr]
+ ["smile","Smiler socialt","Social",1.5,3],
+ ["follow","Følger ting med øjnene","Sanser",1,3],
+ ["headup","Løfter hovedet på maven","Grovmotorik",1,3],
+ ["coo","Laver kurrelyde","Sprog",2,4],
+ ["headsteady","Holder hovedet stabilt","Grovmotorik",3,4.5],
+ ["grab","Griber om legetøj","Finmotorik",3,5],
+ ["laugh","Griner højt","Social",3,5],
+ ["roll1","Ruller fra mave til ryg","Grovmotorik",4,6],
+ ["roll2","Ruller fra ryg til mave","Grovmotorik",5,7],
+ ["sitsupport","Sidder med støtte","Grovmotorik",5,7],
+ ["transfer","Flytter ting fra hånd til hånd","Finmotorik",5,8],
+ ["name","Reagerer på sit navn","Sprog",5,9],
+ ["sit","Sidder uden støtte","Grovmotorik",6,9],
+ ["babble","Pludrer stavelser (ba-ba, da-da)","Sprog",6,9],
+ ["stranger","Genkender fremmede / bliver genert","Social",6,10],
+ ["crawl","Kravler eller kryber","Grovmotorik",7,10],
+ ["pincer","Pincetgreb (tommel + pegefinger)","Finmotorik",8,11],
+ ["pullup","Rejser sig op ved møbler","Grovmotorik",8,11],
+ ["wave","Vinker eller klapper","Social",8,12],
+ ["cruise","Går langs møbler","Grovmotorik",9,12],
+ ["point","Peger for at vise noget","Sprog",10,14],
+ ["firstword","Siger første ord","Sprog",10,14],
+ ["stand","Står selv","Grovmotorik",10,14],
+ ["walk","Går selv","Grovmotorik",11,16],
+ ["cup","Drikker af kop","Selvhjulpen",12,18],
+ ["stack","Stabler 2-3 klodser","Finmotorik",13,18],
+ ["spoon","Spiser selv med ske","Selvhjulpen",13,20],
+ ["bodyparts","Peger på kropsdele","Sprog",15,21],
+ ["words10","Siger 10+ ord","Sprog",15,21],
+ ["run","Løber","Grovmotorik",16,24],
+ ["pretend","Leger 'som om' (fodrer bamse)","Social",15,22],
+ ["kick","Sparker til en bold","Grovmotorik",18,24],
+ ["sentence","Sætter 2 ord sammen","Sprog",20,26],
+ ["stairs","Går op ad trapper med hjælp","Grovmotorik",18,26]
+];
+
+/* ---------- Storage ---------- */
+const KEY="tigerspring.v1";
+let state={children:[],selected:null,theme:null};
+let storageOK=true;
+try{const s=JSON.parse(localStorage.getItem(KEY)||"null");if(s&&Array.isArray(s.children))state=Object.assign(state,s);
+  localStorage.setItem(KEY+".probe","1");localStorage.removeItem(KEY+".probe");}catch(e){storageOK=false;}
+try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist().catch(()=>{});}catch(e){}
+function save(){const {_new,...keep}=state;try{localStorage.setItem(KEY,JSON.stringify(keep));storageOK=true;}catch(e){storageOK=false;}
+  const n=document.getElementById("storageNote");if(n)n.hidden=storageOK;}
+function child(){return state.children.find(c=>c.id===state.selected)||null;}
+
+/* ---------- Dates ---------- */
+const DAY=86400000;
+function parseD(s){if(!s)return null;const[y,m,d]=s.split("-").map(Number);return new Date(y,m-1,d);}
+function today(){const t=new Date();return new Date(t.getFullYear(),t.getMonth(),t.getDate());}
+function addDays(d,n){const x=new Date(d);x.setDate(x.getDate()+Math.round(n));return x;}
+function diffDays(a,b){return Math.round((b-a)/DAY);}
+const fmt=d=>d.toLocaleDateString("da-DK",{day:"numeric",month:"short",year:"numeric"});
+const fmtShort=d=>d.toLocaleDateString("da-DK",{day:"numeric",month:"short"});
+function ageText(days){
+  if(days<0)return `${-days} dage til`;
+  const w=Math.floor(days/7),d=days%7;
+  if(days<7*16)return `${w} uger${d?` og ${d} dag${d>1?"e":""}`:""}`;
+  const m=Math.floor(days/30.4375);const rw=Math.floor((days-m*30.4375)/7);
+  return `${m} mdr.${rw?` og ${rw} uge${rw>1?"r":""}`:""}`;
+}
+function leapDates(c){
+  const due=parseD(c.due);
+  return LEAPS.map(L=>({...L,from:addDays(due,L.start*7),to:addDays(due,L.end*7)}));
+}
+function leapStatus(c){
+  const t=today(),ls=leapDates(c);
+  const cur=ls.find(l=>t>=l.from&&t<=l.to);
+  const next=ls.find(l=>l.from>t);
+  return {ls,cur,next,t};
+}
+function correctedMonths(c){return diffDays(parseD(c.due),today())/30.4375;}
+
+/* ---------- Render ---------- */
+let tab="overview",msFilter="all";
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m]));
+
+function renderPicker(){
+  const p=$("#childPicker");
+  p.innerHTML=state.children.map(c=>`<option value="${c.id}" ${c.id===state.selected?"selected":""}>${esc(c.name)}</option>`).join("")+`<option value="__new">+ Tilføj barn</option>`;
+  $("#childPickerWrap").querySelector("select").classList.toggle("hidden",!state.children.length);
+}
+function render(){
+  renderPicker();
+  document.querySelectorAll("#tabs button").forEach(b=>b.classList.toggle("active",b.dataset.tab===tab));
+  const c=child();
+  if(!c&&tab!=="profile"){tab="profile";return render();}
+  const v=$("#view");
+  if(tab==="overview")v.innerHTML=viewOverview(c);
+  if(tab==="leaps")v.innerHTML=viewLeaps(c);
+  if(tab==="milestones")v.innerHTML=viewMilestones(c);
+  if(tab==="profile")v.innerHTML=viewProfile(c);
+  bind();
+}
+
+function viewOverview(c){
+  const {ls,cur,next,t}=leapStatus(c);
+  const born=parseD(c.birth),due=parseD(c.due);
+  const real=diffDays(born,t),corr=diffDays(due,t);
+  const prem=diffDays(born,due);
+  let hero;
+  if(cur){
+    const left=diffDays(t,cur.to);
+    hero=`<div class="card hero storm"><span class="pill p-storm">Midt i et spring</span>
+      <h2 style="margin-top:8px">Spring ${cur.n}: ${cur.name}</h2>
+      <p>${esc(cur.intro)}</p>
+      <p class="muted small">${fmt(cur.from)} – ${fmt(cur.to)} · ca. ${left} dag${left===1?"":"e"} tilbage</p>
+      <button class="primary" data-goleap="${cur.n}">Se gode råd →</button></div>`;
+  }else if(next){
+    const until=diffDays(t,next.from);
+    hero=`<div class="card hero sun"><span class="pill p-sun">☀️ Solskinsperiode</span>
+      <h2 style="margin-top:8px">Næste spring om ${until} dag${until===1?"":"e"}</h2>
+      <p>Spring ${next.n}: <b>${next.name}</b> starter omkring <b>${fmt(next.from)}</b>.</p>
+      <button data-goleap="${next.n}">Forbered jer →</button></div>`;
+  }else{
+    hero=`<div class="card hero"><span class="pill p-ok">Alle 10 spring klaret 🎉</span><h2 style="margin-top:8px">${esc(c.name)} har gennemført alle tigerspring</h2></div>`;
+  }
+  const done=ls.filter(l=>l.to<t).length;
+  const cm=correctedMonths(c);
+  const ach=Object.keys(c.ms||{}).length;
+  const soon=MILESTONES.filter(m=>!(c.ms||{})[m[0]]&&m[3]<=cm+1.5&&m[4]>=cm).slice(0,4);
+  // timeline
+  const maxW=80,pct=w=>Math.max(0,Math.min(100,w/maxW*100));
+  const nowW=corr/7;
+  const tl=`<div class="timeline">
+    <div class="tl-track"></div>
+    ${LEAPS.map(L=>`<div class="tl-seg" style="left:${pct(L.start)}%;width:${pct(L.end)-pct(L.start)}%" title="Spring ${L.n}"><span>${L.n}</span></div>`).join("")}
+    ${nowW>=0&&nowW<=maxW?`<div class="tl-today" style="left:${pct(nowW)}%"></div>`:""}
+    ${[0,10,20,30,40,50,60,70,80].map(w=>`<div class="tl-axis${w%20?" minor":""}" style="left:${pct(w)}%">${w}u</div>`).join("")}
+  </div>`;
+  return `${hero}
+  <div class="grid g3">
+    <div class="card stat"><div class="muted small">Alder</div><div class="big">${ageText(real)}</div><div class="muted small">født ${fmt(born)}</div></div>
+    <div class="card stat"><div class="muted small">Korrigeret alder (fra termin)</div><div class="big">${ageText(corr)}</div><div class="muted small">${prem>0?`født ${prem} dage før termin`:prem<0?`født ${-prem} dage efter termin`:"født på terminsdagen"}</div></div>
+    <div class="card stat"><div class="muted small">Spring klaret</div><div class="big">${done} / 10</div><div class="bar"><div style="width:${done*10}%"></div></div></div>
+  </div>
+  <div class="card"><h3>Tidslinje (uger efter termin)</h3>
+    <p class="muted small" style="margin:0">Røde felter er urolige perioder (spring), gule er solskinsperioder.</p>${tl}</div>
+  <div class="grid g2">
+    <div class="card"><h3>Bedrifter</h3><p class="muted small">${ach} registreret</p>
+      ${soon.length?`<p class="small" style="margin-bottom:4px"><b>Kan være på vej nu:</b></p><ul class="small" style="margin:0;padding-left:18px">${soon.map(m=>`<li>${m[1]}</li>`).join("")}</ul>`:`<p class="small">Ingen åbne bedrifter lige nu.</p>`}
+      <button style="margin-top:12px" data-gotab="milestones">Se alle bedrifter →</button></div>
+    <div class="card"><h3>Kommende spring</h3>
+      ${ls.filter(l=>l.to>=t).slice(0,3).map(l=>`<div class="row" style="justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--line)"><span><b>${l.n}.</b> ${l.name}</span><span class="muted small">${fmtShort(l.from)} – ${fmtShort(l.to)}</span></div>`).join("")||`<p class="small">Ingen flere 🎉</p>`}
+      <button style="margin-top:12px" id="copyBtn">📋 Kopiér alle datoer</button> <span id="copyMsg" class="saved"></span></div>
+  </div>`;
+}
+
+function viewLeaps(c){
+  const {ls,cur,t}=leapStatus(c);
+  return `<p class="muted">Beregnet ud fra ${esc(c.name)}s terminsdato ${fmt(parseD(c.due))}. Tryk på et spring for at se detaljer.</p>`+
+  ls.map(l=>{
+    const st=l.to<t?"past":(cur&&cur.n===l.n?"now":"future");
+    const pill=st==="past"?`<span class="pill p-ok">Klaret</span>`:st==="now"?`<span class="pill p-storm">I gang nu</span>`:`<span class="pill p-muted">Om ${diffDays(t,l.from)} dage</span>`;
+    return `<details class="card leap ${st}" id="leap-${l.n}" ${st==="now"?"open":""}>
+      <summary><div class="num">${l.n}</div>
+        <div class="head"><h3 style="margin:0">${l.name}</h3>
+          <div class="muted small">${fmtShort(l.from)} – ${fmt(l.to)} · uge ${Math.ceil(l.start)}–${Math.ceil(l.end)}</div></div>
+        ${pill}<span class="chev">›</span></summary>
+      <div class="body">
+        <p>${esc(l.intro)}</p>
+        <div class="grid g2">
+          <div class="box"><h4>🌧️ Tegn på springet</h4><ul>${l.signs.map(s=>`<li>${esc(s)}</li>`).join("")}</ul></div>
+          <div class="box"><h4>🌱 Det opnår barnet</h4><ul>${l.learns.map(s=>`<li>${esc(s)}</li>`).join("")}</ul></div>
+          <div class="box"><h4>👶 Gør det nemmere for barnet</h4><ul>${l.baby.map(s=>`<li>${esc(s)}</li>`).join("")}</ul></div>
+          <div class="box"><h4>💛 Til jer som forældre</h4><ul>${l.parents.map(s=>`<li>${esc(s)}</li>`).join("")}</ul></div>
+        </div>
+      </div></details>`;
+  }).join("");
+}
+
+function msStatus(m,cm,ms){
+  if(ms[m[0]])return {k:"done",label:"Kan nu ✓",cls:"p-ok"};
+  if(cm>=m[3]&&cm<=m[4])return {k:"now",label:"Typisk nu",cls:"p-accent"};
+  if(cm<m[3]&&m[3]-cm<=2)return {k:"soon",label:`Om ca. ${Math.max(1,Math.round((m[3]-cm)*4.35))} uger`,cls:"p-blue"};
+  if(cm<m[3])return {k:"later",label:`Om ca. ${Math.round(m[3]-cm)} mdr.`,cls:"p-muted"};
+  return {k:"past",label:"De fleste kan det nu",cls:"p-muted"};
+}
+function viewMilestones(c){
+  const cm=correctedMonths(c),ms=c.ms||{};
+  const rng=m=>`${String(m[3]).replace(".",",")}–${m[4]} mdr.`;
+  const items=MILESTONES.map(m=>({m,s:msStatus(m,cm,ms)}));
+  const groups=[
+    ["done","🏆 Kan nu",items.filter(i=>i.s.k==="done")],
+    ["now","✨ Typisk på vej nu",items.filter(i=>i.s.k==="now"||i.s.k==="past")],
+    ["soon","🔜 Forventes inden for 2 mdr.",items.filter(i=>i.s.k==="soon")],
+    ["later","🗓️ Senere",items.filter(i=>i.s.k==="later")]
+  ];
+  const cats=["all",...new Set(MILESTONES.map(m=>m[2]))];
+  const show=i=>msFilter==="all"||i.m[2]===msFilter;
+  return `<div class="card"><h2>Bedrifter for ${esc(c.name)}</h2>
+    <p class="muted small" style="margin:0">Korrigeret alder: <b>${ageText(diffDays(parseD(c.due),today()))}</b>. Sæt flueben når ${esc(c.name)} kan noget nyt – så gemmes datoen. Aldersintervallerne er vejledende; der er stor normal variation.</p>
+    <div class="bar"><div style="width:${Object.keys(ms).length/MILESTONES.length*100}%"></div></div>
+    <p class="muted small" style="margin:4px 0 0">${Object.keys(ms).length} af ${MILESTONES.length} bedrifter</p></div>
+    <div class="filters">${cats.map(k=>`<button data-filter="${k}" class="${msFilter===k?"active":""}">${k==="all"?"Alle":k}</button>`).join("")}</div>
+    ${groups.map(([k,title,list])=>{const l=list.filter(show);if(!l.length)return"";return `<div class="card"><h3>${title} <span class="muted small">(${l.length})</span></h3>
+      ${l.map(({m,s})=>`<div class="ms"><input type="checkbox" data-ms="${m[0]}" ${ms[m[0]]?"checked":""} aria-label="${esc(m[1])}">
+        <div class="t"><div><b>${esc(m[1])}</b></div><div class="meta"><span class="pill ${s.cls}">${s.label}</span><span class="muted small">${m[2]} · typisk ${rng(m)}</span>
+        ${ms[m[0]]?`<input type="date" data-msdate="${m[0]}" value="${ms[m[0]]}" max="${isoToday()}">`:""}</div></div></div>`).join("")}</div>`}).join("")}
+    <p class="muted small">Hvis du er bekymret for dit barns udvikling, så tal med sundhedsplejersken eller lægen – de kender dit barn og kan vurdere helheden.</p>`;
+}
+function isoToday(){const t=today();return `${t.getFullYear()}-${String(t.getMonth()+1).padStart(2,"0")}-${String(t.getDate()).padStart(2,"0")}`;}
+
+function viewProfile(c){
+  const editing=c&&!state._new;
+  const v=editing?c:{name:"",birth:"",due:""};
+  return `<div class="card">
+    ${!state.children.length?`<div class="empty" style="padding:10px 0 20px"><div class="emoji">🐯</div><h2>Velkommen</h2><p class="muted">Registrer dit barn for at se hvornår tigerspringene kommer.</p></div>`:`<h2>${editing?"Rediger "+esc(c.name):"Tilføj barn"}</h2>`}
+    <form id="childForm">
+      <div class="form-row">
+        <div><label for="fName">Navn</label><input type="text" id="fName" required value="${esc(v.name)}" placeholder="Fx Ida"></div>
+        <div><label for="fBirth">Fødselsdato</label><input type="date" id="fBirth" required value="${v.birth}"></div>
+        <div><label for="fDue">Terminsdato</label><input type="date" id="fDue" required value="${v.due}"></div>
+      </div>
+      <p class="muted small">Kender du ikke terminsdatoen, så brug fødselsdatoen.</p>
+      <div class="row"><button class="primary" type="submit">${editing?"Gem ændringer":"Gem barn"}</button>
+      ${state._new&&state.children.length?`<button type="button" id="cancelNew">Annuller</button>`:""}
+      ${editing?`<button type="button" class="danger" id="delChild">Slet ${esc(c.name)}</button>`:""}</div>
+    </form></div>
+    ${editing?`<div class="card"><h3>Sikkerhedskopi</h3><p class="muted small">Data ligger kun i denne browser. Eksportér for at gemme eller flytte til en anden enhed.</p>
+      <div class="row"><button id="expBtn">⬇️ Eksportér</button><input type="file" id="impFile" accept="application/json,.json" hidden><button id="impBtn">⬆️ Importér</button></div><p id="bkMsg" class="saved" style="margin:8px 0 0"></p></div>`:""}`;
+}
+
+/* ---------- Events ---------- */
+function bind(){
+  document.querySelectorAll("[data-gotab]").forEach(b=>b.onclick=()=>{tab=b.dataset.gotab;render();});
+  document.querySelectorAll("[data-goleap]").forEach(b=>b.onclick=()=>{tab="leaps";render();const el=$("#leap-"+b.dataset.goleap);if(el){el.open=true;el.scrollIntoView({behavior:"smooth",block:"start"});}});
+  document.querySelectorAll("[data-filter]").forEach(b=>b.onclick=()=>{msFilter=b.dataset.filter;render();});
+  document.querySelectorAll("[data-ms]").forEach(cb=>cb.onchange=()=>{const c=child();c.ms=c.ms||{};if(cb.checked)c.ms[cb.dataset.ms]=isoToday();else delete c.ms[cb.dataset.ms];save();render();});
+  document.querySelectorAll("[data-msdate]").forEach(i=>i.onchange=()=>{const c=child();if(i.value){c.ms[i.dataset.msdate]=i.value;save();}});
+  const f=$("#childForm");
+  if(f)f.onsubmit=e=>{e.preventDefault();
+    const name=$("#fName").value.trim(),birth=$("#fBirth").value,due=$("#fDue").value||birth;
+    if(!name||!birth)return;
+    const c=child();
+    if(c&&!state._new){Object.assign(c,{name,birth,due});}
+    else{const id="c"+Date.now();state.children.push({id,name,birth,due,ms:{}});state.selected=id;}
+    delete state._new;save();tab="overview";render();};
+  const cn=$("#cancelNew");if(cn)cn.onclick=()=>{delete state._new;tab="overview";render();};
+  const del=$("#delChild");if(del)del.onclick=()=>{const c=child();if(!del.dataset.armed){del.dataset.armed="1";del.textContent=`Tryk igen for at slette ${c.name} og alle bedrifter`;del.style.background="var(--storm-soft)";return;}
+    state.children=state.children.filter(x=>x.id!==c.id);state.selected=state.children[0]?.id||null;save();render();};
+  const cp=$("#copyBtn");if(cp)cp.onclick=async()=>{const c=child();const txt=`Tigerspring for ${c.name}\n`+leapDates(c).map(l=>`Spring ${l.n} – ${l.name}: ${fmt(l.from)} – ${fmt(l.to)}`).join("\n");
+    try{await navigator.clipboard.writeText(txt);$("#copyMsg").textContent="Kopieret ✓";}catch(e){$("#copyMsg").textContent="Kunne ikke kopiere";}};
+  const exp=$("#expBtn");if(exp)exp.onclick=async()=>{const msg=$("#bkMsg");
+    try{const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify({children:state.children},null,2)],{type:"application/json"}));
+      a.download="tigerspring-backup.json";document.body.appendChild(a);a.click();a.remove();msg.textContent="Gemt ✓";}catch(e){msg.textContent="Download er ikke muligt her.";}};
+  const ib=$("#impBtn");if(ib)ib.onclick=()=>$("#impFile").click();
+  const imf=$("#impFile");if(imf)imf.onchange=async()=>{try{const d=JSON.parse(await imf.files[0].text());if(Array.isArray(d.children)){state.children=d.children;state.selected=d.children[0]?.id||null;save();tab="overview";render();}else throw 0;}catch(e){$("#bkMsg").textContent="Filen kunne ikke læses – vælg en tigerspring-backup.json.";}};
+}
+$("#tabs").onclick=e=>{const b=e.target.closest("button");if(!b)return;tab=b.dataset.tab;delete state._new;render();};
+$("#childPicker").onchange=e=>{if(e.target.value==="__new"){state._new=true;tab="profile";}else{state.selected=e.target.value;delete state._new;}save();render();};
+$("#themeBtn").onclick=()=>{const cur=document.documentElement.dataset.theme||(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");
+  state.theme=cur==="dark"?"light":"dark";document.documentElement.dataset.theme=state.theme;save();};
+if(state.theme)document.documentElement.dataset.theme=state.theme;
+
+if(!storageOK)document.getElementById("storageNote").hidden=false;
+render();
+</script>
+</body>
+</html>
